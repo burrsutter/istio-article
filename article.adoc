@@ -551,7 +551,7 @@ curl -A Firefox customer-tutorial.$(minishift ip).nip.io
 Note: if you use real browsers, watch out for the fact that Chrome on MacOS also includes Safari in its user-agent string as that can cause some confusion for you. 
 
 === Clean Up
-To clean up your Istio destinationrules and virtualservice definitions and return to the original Kubernetes behavior, you can simply delete them.
+To clean up your Istio destinationrules and virtualservices definitions and return to the original Kubernetes behavior, you can simply delete them.
 
 [source,bash]
 ----
