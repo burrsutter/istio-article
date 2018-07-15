@@ -11,14 +11,14 @@ ifndef::imagesdir[:imagesdir: images]
 
 [abstract]
 --
-An introduction and tutorial for Istio Service Mesh with Kubernetes and OpenShift enabling lighterweight, simplified, more manageble microservices in Java or any language/runtime/framework.
+A tutorial for Istio Service Mesh with Kubernetes and OpenShift enabling lighter weight and more manageable microservices in Java or any language/runtime/framework.
 --
 
 == Introduction: Start with Why
-The old adage is that speed kills, yet software developers are under ever growing pressure to deliver more features & fixes ever faster.  The blossoming of the https://martinfowler.com/articles/microservices.html[Microservices Architecture Style] - a movement with a religious-like fervor has further complicated matters - means now there may be many codebases each representing a unique software component payload with their own pipeline flowing into production.   Kubernetes + Istio represents a new application delivery platform that will enable high velocity and help you manage the resulting higher complexity.
+The old adage is that speed kills, yet software developers are under ever growing pressure to deliver more features & fixes ever faster.  The blossoming of the https://martinfowler.com/articles/microservices.html[Microservices Architecture Style] - a movement with a religious-like fervor has further complicated matters - means now there may be many codebases each representing an unique software component payload with their own pipeline flowing into production.  Kubernetes + Istio represents a new application delivery platform that will enable high velocity and help you manage the resulting higher complexity.
 
 === In this article
-In this article, we are going to introduce you to the service mesh technology known as Istio.  An open source technology that augments Kubernetes in numerous ways, however, to keep things succient enough for this publication, we will focus on two of the basics - observability and smart canary deployments. The ability to "see and verify", giving your greater confidence therefore increasing your time to production velocity.  And even if you have no experience with Kubernetes itself, no worries, we will cover the basics needed to at least deploy and manage an app/service (microservice) or three.
+In this article, we are going to introduce you to the service mesh technology known as Istio.  An open source technology that augments Kubernetes in numerous ways, however, to keep things succinct enough for this publication, we will focus on two of the basics - observability and smart canary deployments. The ability to "see and verify", giving your greater confidence therefore increasing your time to production velocity.  And even if you have no experience with Kubernetes itself, no worries, we will cover the basics needed to at least deploy and manage an app/service (microservice) or three.
 
 === New Super Powers
 The big win here is that Kubernetes + Istio essentially removes a significant number of otherwise embedded libraries from your application components.  Perhaps Netflix OSS Libraries that you may have used for service discovery, load-balancing, fail-over and configuration management are part of the Kubernetes infrastructure.  Libraries for distributed trace collection, route management, chaos injection and circuit breaking are part of Istio.  In addition, these Kubernetes + Istio capabilities work with any programming language, runtime or framework by leveraging a sidecar container.   See Figure 1: Before Istio and Figure 2: After Istio for some additional context.
@@ -34,10 +34,15 @@ The first phase of experimentation is to get a working Kubernetes cluster.  I pe
 
 === Downloads
 * https://www.docker.com/docker-mac[Download and install Docker for Mac or Windows]
+
 You can turn off the Docker Daemon/Engine and save memory, you just need the docker CLI (Command Line Interface) for the examples demonstrated in this article.  
+
 * https://www.virtualbox.org/wiki/Downloads[Download and install VirtualBox]
+
 There are a variety of hypervisors you can use but I prefer VirtualBox as it is available on many platforms
+
 * https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl[Download and configure kubectl in your PATH]
+
 * https://github.com/minishift/minishift/releases[Download and configure minishift in your PATH]
 
 The examples below assume knowledge of the bash shell and have been tested on MacOS.  In addition, these examples use minishift - a developer-focused, open-source, distribution OpenShift which is Red Hat's distribution of Kubernetes.  There are some shortcuts allowed by OpenShift's oc CLI that are leveraged below.
@@ -54,7 +59,7 @@ $ minishift addon enable admin-user
 $ minishift addon enable anyuid
 $ minishift start
 ----
-<1> kvm for Fedora or perhaps xyhve for MacOS.  Configuration of a virtualization environment on your laptop can be tricky, for more installation assitance check out 
+<1> kvm for Fedora or perhaps xyhve for MacOS.  Configuration of a virtualization environment on your laptop can be tricky, for more installation assistance check out 
 https://docs.openshift.org/latest/minishift/getting-started/setting-up-virtualization-environment.html[Preparing to Install Minishift]
 
 === Console
@@ -78,7 +83,7 @@ $ eval $(minishift docker-env) # <1>
 $ eval $(minishift oc-env) # <2>
 $ oc login $(minishift ip):8443 -u admin -p admin # <3>
 ----
-<1> points your docker CLI to the minishift hosted docker Daemon, try "docker images" to see what is already preloaded
+<1> points your docker CLI to the minishift hosted docker Daemon, try "docker images" to see what is already pre-loaded
 <2> puts the oc CLI into your PATH, try "oc status".  "oc" is a superset of the "kubectl" CLI, it provides several shortcuts for managing user login, namespaces/projects, routes, etc.
 <3> logs you in as the cluster administrator which will be critical for the next steps.  While it is possible to login via "kubectl", this is one area that "oc" makes easier.
 
@@ -94,7 +99,7 @@ https://github.com/istio/istio/releases/[Istio downloads]
 
 
 === Sidebar:
-The name *Istio* is a greek nautical term for sail as in a ship's sail.  Much like Kubernetes is a greek nautical term for ships pilot or helmsman.  The nautical references are based on the fact that the common visual metaphor for Linux containers is the container ship, where universal packaging has made it possible to transport pratically anything around the globe with relative ease. 
+The name *Istio* is a greek nautical term for sail as in a ship's sail.  Much like Kubernetes is a greek nautical term for ships pilot or helmsman.  The nautical references are based on the fact that the common visual metaphor for Linux containers is the container ship, where universal packaging has made it possible to transport practically anything around the globe with relative ease. 
 
 === Configure environment for Istio
 [source,bash]
@@ -103,7 +108,7 @@ $ cd istio-0.8.0
 $ export ISTIO_HOME=`pwd` # <1>
 $ export PATH=$ISTIO_HOME/bin:$PATH # <2>
 ----
-<1> the backticks are important. The key often found on the far upper left of your keyboard below the Esc key.  
+<1> the back ticks are important. That key often found on the far upper left of your keyboard below the Esc key.  
 <2> this will put "istioctl" in your PATH.  You can verify by using "istioctl version"
 
 === Namespaces
@@ -224,7 +229,7 @@ You can use "kubectl describe pod customer-59d7644f6b-jthlt" (replacing your pod
       /usr/local/bin/envoy
 ----      
 
-The Customer app/service will need a public URL, exposed outside of the cluster.  OpenShift has a simple way to handle that "oc expose <servicename>"/
+The Customer app/service will need a public URL, exposed outside of the cluster.  OpenShift has a simple way to handle that "oc expose <servicename>".
 
 [source,bash]
 ----
@@ -257,7 +262,7 @@ Log output (System.out.println) can be viewed via
 ----
 $ kubectl logs customer-59d7644f6b-jthlt -c customer # <1>
 ----
-<1> customer-59d7644f6b-jthlt to be replaced with your pod indentifier shown by your "kubectl get pods"
+<1> customer-59d7644f6b-jthlt to be replaced with your pod identifier shown by your "kubectl get pods"
 
 === Preference Build & Deploy
 Go ahead and deploy the Preference app/service.
@@ -432,15 +437,17 @@ spec:
         subset: version-v2
       weight: 10
 ----
+
 In this case, routing just 10% of the transactions to Recommendation V2.  Let's see this in action. 
 
-Make sure to get back to the main istio-tutorial directory, use these commands:
+Make sure to get back to the main istio-tutorial directory and use the following commands:
 
 [source,bash]
 ----
 istioctl create -f istiofiles/destination-rule-recommendation-v1-v2.yml -n tutorial
 istioctl create -f istiofiles/virtual-service-recommendation-v1_and_v2.yml -n tutorial
 ----
+
 and then count off about 10 seconds.  In the 0.8.0 release of Istio, the VirtualService rules take a while to take effect, we believe this will be addressed in the 1.0.0 release.
 
 === Random 10%
@@ -460,7 +467,9 @@ customer => preference => recommendation v1 from '6b499f8d9-ph45w': 196
 ----
 
 === Rollback the Canary
-Now, what if the boss comes to you and says there is a big problem, we need to rollback V2 simply by replacing the previous rule with one that sends all traffic to V1.
+Now, what if the boss comes to you and says there is a big problem! Rollback! 
+
+That is as simple as replacing the previous rule with one that sends all traffic to V1.
 
 [source,yaml]
 ----
@@ -494,7 +503,7 @@ We have to bring this article to a close but there is one more aspect of this ex
 tracer.activeSpan().setBaggageItem("user-agent", userAgent);
 ----
 
-Istio's ability to route is not limited to simple percentages but it can also use regex expressions and look inside the HTTP headers, this means you can have an even smarter canary deployment so that only Safari users see the changed behavior in V2.  Or perhaps just logged in emplyoees or perhaps just customers who have agreed to beta testers.  
+Istio's ability to change routing behavior is not limited to simple percentages but it can also use regex expressions and look inside the HTTP headers, this means you can have an even smarter canary deployment so that only Safari users see the changed behavior in V2.  Or perhaps just logged in employees or perhaps just customers who have agreed to beta testers.  
 
 Here is the rule for sending Safari users to Recommendation V2
 
@@ -539,7 +548,7 @@ curl -A Safari customer-tutorial.$(minishift ip).nip.io
 curl -A Firefox customer-tutorial.$(minishift ip).nip.io
 ----
 
-Note: if you use real browsers, watch out for the fact that Chrome on MacOS also includes Safari in its user-agent string, that can cause some confusion for you. 
+Note: if you use real browsers, watch out for the fact that Chrome on MacOS also includes Safari in its user-agent string as that can cause some confusion for you. 
 
 === Clean Up
 To clean up your Istio destinationrules and virtualservice definitions and return to the original Kubernetes behavior, you can simply delete them.
